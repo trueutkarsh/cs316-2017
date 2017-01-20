@@ -347,7 +347,6 @@ variable:
 
 constant:
 	INTEGER_NUMBER
-	//ADD YOUR CODE HERE
 	{
 		if(NOT_ONLY_PARSE)
 		{

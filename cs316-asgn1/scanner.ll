@@ -8,7 +8,7 @@ alpha [a-zA-Z]
 
 %%
 // ADD REGEX FOR INTEGER_NUMBER
-[[:digit:]]+	{
+-?[[:digit:]]+	{
 
  	  ParserBase::STYPE__ *val = getSval();
           val->integer_value = atoi(matched().c_str());

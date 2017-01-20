@@ -1,7 +1,7 @@
 OBJ_GEN = scanner.o parser.o
 OBJ_CORE = main.o
 OBJ = $(OBJ_GEN) $(OBJ_CORE) 
-
+FILENAME=Group_48
 
 HEADERS_CORE = error-display.hh user-options.hh local-environment.hh ast.hh symbol-table.hh program.hh procedure.hh sequence-ast.hh common-classes.hh
 HEADERS_GEN = parser.h parser.ih parserbase.h scanner.h scanner.ih scannerbase.h
@@ -36,3 +36,10 @@ clean :
 	rm -f *.o scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
 	rm -f $(TGT)
 	rm -f cscope.out tags a.out
+	
+submission :
+	rm -f $(FILENAME).tar.gz
+	mkdir -p $(FILENAME)
+	cp parser.yy scanner.ll $(FILENAME)/
+	tar -cvzf $(FILENAME).tar.gz $(FILENAME)/
+	

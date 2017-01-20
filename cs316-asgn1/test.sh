@@ -4,7 +4,8 @@ rm -rf Examples16
 mkdir Examples16
 rm -rf Examples/*.spim
 cp Examples/* Examples16/
-for i in `seq 1 8`;
+l=$(ls Examples/ | grep -P ".c$" | wc -l)
+for i in `seq 1 $l`;
 do
 	./sclp "Examples/test$i.c"
 	./sclp16 "Examples16/test$i.c"
