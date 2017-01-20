@@ -1,9 +1,10 @@
+make clean
 make
 rm -rf Examples16
 mkdir Examples16
 rm -rf Examples/*.spim
 cp Examples/* Examples16/
-for i in `seq 1 7`;
+for i in `seq 1 8`;
 do
 	./sclp "Examples/test$i.c"
 	./sclp16 "Examples16/test$i.c"
@@ -15,3 +16,5 @@ do
 		echo "OOPS! wrong for test case $i"
 	fi
 done
+
+make clean

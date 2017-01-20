@@ -251,11 +251,10 @@ statement_list:
 	//ADD YOUR CODE HERE
 	{
 	if (NOT_ONLY_PARSE)
-	{
-		Sequence_Ast * stmt_list = new Sequence_Ast(get_line_number());
-		current_procedure->set_sequence_ast(*stmt_list);
-		$$ = stmt_list;
-	}
+		{
+			//Sequence_Ast * 
+			$$ = NULL;
+		}
 	}
 |
 	statement_list assignment_statement
@@ -267,8 +266,10 @@ statement_list:
 			Ast * stmt = $2;
 			// check if  both are not null
 			CHECK_INVARIANT((stmt != NULL), "The assignment statement cannot be null");
-			CHECK_INVARIANT((stmt_list != NULL), "The assignment statement list cannot be null");
-			
+			if (stmt_list == NULL ){
+				stmt_list = new Sequence_Ast(get_line_number());
+			}
+
 			// add statement to statement_list
 			stmt_list->ast_push_back(stmt);
 
