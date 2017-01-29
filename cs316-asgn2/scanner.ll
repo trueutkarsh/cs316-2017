@@ -8,21 +8,25 @@ alpha [a-zA-Z]
 
 
 %%
-// ADD REGEX FOR DOUBLE_NUMBER
-[+-]?{digit}*\.{digit}+  {
-
- 	  ParserBase::STYPE__ *val = getSval();
-          val->double_value = atof(matched().c_str());
-	  return Parser::DOUBLE_NUMBER;
-}
-
 // ADD REGEX FOR INTEGER_NUMBER
--?[[:digit:]]+	{
+-?{digit}+	{
 
  	  ParserBase::STYPE__ *val = getSval();
           val->integer_value = atoi(matched().c_str());
+		  //cout<<"Found integer number"<<endl;
 	  return Parser::INTEGER_NUMBER; 
+
 	}
+
+// ADD REGEX FOR DOUBLE_NUMBER
+[-]?{digit}*\.{digit}+([eE][+-]?{digit}+)?  {
+
+ 	  ParserBase::STYPE__ *val = getSval();
+          val->double_value = atof(matched().c_str());
+		  //cout<<"Found double number"<<endl;
+	  return Parser::DOUBLE_NUMBER;
+}
+
 
 
 // ADD REGEX FOR INTEGER
@@ -33,6 +37,7 @@ int   {
 // ADD REGEX FOR float
 
 float   {
+	
 		return Parser::FLOAT;	
 	   }
 
@@ -55,6 +60,10 @@ void  {
 	}
 
 
+\+			{  return matched()[0];}
+\-			{  return matched()[0];}
+\/			{  return matched()[0];}
+\*			{  return matched()[0];}
 \( 			{  return matched()[0];}	
 \{			{  return matched()[0];}
 \}			{  return matched()[0];}

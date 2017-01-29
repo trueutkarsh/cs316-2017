@@ -1,7 +1,10 @@
-void main(); main()
+void main(); 
+main()
 {
 
-	float y;
+	int y;
 	int z;
-	z = 1;
+	y = 9;
+	z = y * 9 ;
+
 }

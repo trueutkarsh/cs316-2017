@@ -32,6 +32,9 @@ parserbase.h: parser.cc
 parser.cc: parser.yy parser.ih parser.h
 	$(BISONCPP) --verbose parser.yy
 
+debug: $(OBJ)
+	$(CPP) --std=c++0x -g -L. -Wl,-rpath=. $(option) $(OBJ) -o $(TGT) -lreference
+
 
 clean :
 	rm -rf test_files test_files_output

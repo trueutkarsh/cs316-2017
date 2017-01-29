@@ -63,6 +63,7 @@ Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line)
 	lhs = temp_lhs;
 	rhs = temp_rhs;
 	lineno = line;
+	ast_num_child = binary_arity;
 
 }
 
@@ -79,15 +80,21 @@ bool Assignment_Ast::check_ast()
 
 	// use typeid(), get_data_type()
 	//ADD CODE HERE
+	// CHECK_INVARIANT((lhs->get_data_type() == rhs->get_data_type()), "Lhs of Assignment_Ast cannot be null");
 
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, 
 		"Assignment statement data type not compatible", lineno);
+	return true;
 }
 
 void Assignment_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-	return;
+	file_buffer<<"\n Asgn: \n";
+	lhs->print(file_buffer);
+	file_buffer<<" = ";
+	rhs->print(file_buffer);
+	file_buffer<<"\n";
 }
 
 /////////////////////////////////////////////////////////////////
@@ -95,10 +102,12 @@ void Assignment_Ast::print(ostream & file_buffer)
 Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line)
 {
 
+	variable_symbol_entry = &var_entry;
 	CHECK_INVARIANT((variable_symbol_entry->get_variable_name() == name),
 		"Variable's symbol entry is not matching its name");
 	//ADD CODE HERE
-	variable_symbol_entry = &var_entry;
+	lineno = line;
+	ast_num_child = zero_arity;
 }
 
 Name_Ast::~Name_Ast()
@@ -129,7 +138,9 @@ void Name_Ast::set_data_type(Data_Type dt)
 void Name_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-
+	file_buffer<<" ";
+	file_buffer<<variable_symbol_entry->get_variable_name();
+	file_buffer<<" ";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -142,6 +153,7 @@ Number_Ast<DATA_TYPE>::Number_Ast(DATA_TYPE number, Data_Type constant_data_type
 	constant = number;
 	node_data_type = constant_data_type;
 	lineno = line;
+	ast_num_child = zero_arity;
 	
 }
 
@@ -182,6 +194,8 @@ void Number_Ast<DATA_TYPE>::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
 	file_buffer<<constant;
+	file_buffer<<" ";
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -196,14 +210,16 @@ void Arithmetic_Expr_Ast::set_data_type(Data_Type dt)
 {
 	//ADD CODE HERE
 	node_data_type = dt;
+
 }
 
 bool Arithmetic_Expr_Ast::check_ast()
 {
 	// use get_data_type(), typeid()
 	//ADD CODE HERE
-
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible", lineno);
+	return true;
+
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -215,16 +231,17 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 	lhs = l;
 	rhs = r;
 	lineno = line;
-
+	ast_num_child = binary_arity;
 }
 
 void Plus_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
+	file_buffer<<"\n Plus \n LHS: \n";
 	lhs->print(file_buffer);
-	file_buffer<<" + ";
+	file_buffer<<" \n RHS: \n";
 	rhs->print(file_buffer);
-
+	file_buffer<<"\n";
 }
 
 /////////////////////////////////////////////////////////////////
@@ -235,15 +252,17 @@ Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 	lhs = l;
 	rhs = r;
 	lineno = line;
+	ast_num_child = binary_arity;
 }
 
 void Minus_Ast::print(ostream & file_buffer)
 {
-	//ADD CODE HERE
+	//ADD CODE HERE	
+	file_buffer<<"\n Minus  LHS: ";
 	lhs->print(file_buffer);
-	file_buffer<<" - ";
+	file_buffer<<" - \n RHS: \n";
 	rhs->print(file_buffer);
-
+	file_buffer<<"\n";
 }
 
 //////////////////////////////////////////////////////////////////
@@ -254,15 +273,17 @@ Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 	lhs = l;
 	rhs = r;
 	lineno = line;
+	ast_num_child = binary_arity;
 }
 
 void Mult_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
+	file_buffer<<"\n Mult :LHS: ";
 	lhs->print(file_buffer);
-	file_buffer<<" * ";
+	file_buffer<<" * \n RHS: \n";
 	rhs->print(file_buffer);
-
+	file_buffer<<"\n";
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -273,15 +294,18 @@ Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 	lhs = l;
 	rhs = r;
 	lineno = line;
+	ast_num_child = binary_arity;
 }
 
 void Divide_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-	lhs->print(file_buffer);
-	file_buffer<<" / ";
-	rhs->print(file_buffer);
 
+	file_buffer<<"\n Divide :LHS: ";
+	lhs->print(file_buffer);
+	file_buffer<<" / \n RHS: \n";
+	rhs->print(file_buffer);
+	file_buffer<<"\n";
 }
 
 //////////////////////////////////////////////////////////////////////
