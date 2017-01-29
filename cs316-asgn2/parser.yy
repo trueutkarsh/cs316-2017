@@ -12,6 +12,8 @@
 	pair<Data_Type, string> * decl;
 	Sequence_Ast * sequence_ast;
 	Ast * ast;
+	Arithmetic_Expr_Ast *arthm_ast;
+	Assignment_Ast * asmt_ast;
 	Symbol_Table * symbol_table;
 	Symbol_Table_Entry * symbol_entry;
 	Procedure * procedure;
@@ -27,8 +29,9 @@
 
 %left '+' '-'
 %left '*' '/'
-%right UMINUS
+//%right UMINUS
 %nonassoc '('
+%nonassoc ')'
 
 
 
@@ -38,11 +41,10 @@
 %type <decl> declaration
 //ADD CODE HERE
 %type <sequence_ast> statement_list
-%type <ast> assignment_statement
+%type <asmt_ast> assignment_statement
 %type <ast> variable
 %type <ast> constant
-%type <ast> operand
-%type <ast> arith_expression
+%type <arthm_ast> arith_expression
 %type <ast> expression_term
 
 %start program
@@ -303,7 +305,7 @@ statement_list:
 		Sequence_Ast * stmt_list = $1;
 		Ast * stmt = $2;
 		// check if  both are not null
-		CHECK_INVARIANT((stmt != NULL), "The assignment statement cannot be null");
+		//CHECK_INVARIANT((stmt != NULL), "The assignment statement cannot be null");
 		if (stmt_list == NULL ){
 			stmt_list = new Sequence_Ast(get_line_number());
 		}
@@ -328,7 +330,7 @@ assignment_statement:
 		Ast * left = $1;
 		Ast * right = $3;
 		
-		Ast * assgn_stmt = new Assignment_Ast(left, right, get_line_number());
+		Assignment_Ast * assgn_stmt = new Assignment_Ast(left, right, get_line_number());
 		// make a joint ast
 
 		$$ = assgn_stmt;
@@ -341,7 +343,7 @@ arith_expression:
                 // SUPPORT binary +, -, *, / operations, unary -, and allow parenthesization
                 // i.e. E -> (E)
                 // Connect the rules with the remaining rules given below
-	operand '+' operand
+	arith_expression '+' arith_expression
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -350,14 +352,14 @@ arith_expression:
 		Ast * left = $1;
 		Ast * right = $3;
 
-		Ast * plus_stmt = new Plus_Ast(left, right, get_line_number());
+		Arithmetic_Expr_Ast * plus_stmt = new Plus_Ast(left, right, get_line_number());
 
 		$$ = plus_stmt;
 	}
 
 	}
 |
-	operand '-' operand
+	arith_expression '-' arith_expression
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -366,14 +368,14 @@ arith_expression:
 		Ast * left = $1;
 		Ast * right = $3;
 
-		Ast * minus_stmt = new Minus_Ast(left, right, get_line_number());
+		Arithmetic_Expr_Ast * minus_stmt = new Minus_Ast(left, right, get_line_number());
 
 		$$ = minus_stmt;	
 	}
 
 	}
 |
-	operand '*' operand
+	arith_expression '*' arith_expression
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -382,14 +384,14 @@ arith_expression:
 		Ast * left = $1;
 		Ast * right = $3;
 
-		Ast * mult_stmt = new Mult_Ast(left, right, get_line_number());
+		Arithmetic_Expr_Ast * mult_stmt = new Mult_Ast(left, right, get_line_number());
 
 		$$ = mult_stmt;
 	}
 
 	}
 |
-	operand '/' operand
+	arith_expression '/' arith_expression
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -398,43 +400,42 @@ arith_expression:
 		Ast * left = $1;
 		Ast * right = $3;
 
-		Ast * divide_stmt = new Divide_Ast(left, right, get_line_number());
+		Arithmetic_Expr_Ast * divide_stmt = new Divide_Ast(left, right, get_line_number());
 
 		$$ = divide_stmt;
 	}
 
 	}
 |
-	'(' operand ')'
+	'(' arith_expression ')'
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = $2;
+		$$ = (Arithmetic_Expr_Ast *) $2;
 	}
 
 	}
 |
+// 	'-' arith_expression %prec UMINUS
+// 	{
+// 	if (NOT_ONLY_PARSE)
+// 	{
+// 		$$ = (Arithmetic_Expr_Ast *) $2;
+// 	}
+
+// 	}
+// |
 	expression_term
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = $1;
+		$$ = (Arithmetic_Expr_Ast *) $1;
 	}
 
 	}
 
 ;
 
-operand:
-	arith_expression
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		//ADD CODE HERE
-		$$ = $1;
-	}
-	}
-;
 
 expression_term:
 	variable

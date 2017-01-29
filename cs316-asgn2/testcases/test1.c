@@ -1,6 +1,7 @@
 void main(); main ()
 {
   int a;
-  a + 6;
+  int k ;
+  k = a + 6;
 }
 

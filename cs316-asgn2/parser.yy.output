@@ -19,19 +19,18 @@ Production Rules
 16: statement_list ->  <empty>
 17: statement_list ->  statement_list assignment_statement
 18: assignment_statement (ASSIGN) ->  variable ASSIGN arith_expression ';'
-19: arith_expression ('+') ->  operand '+' operand
-20: arith_expression ('-') ->  operand '-' operand
-21: arith_expression ('*') ->  operand '*' operand
-22: arith_expression ('/') ->  operand '/' operand
-23: arith_expression ('(') ->  '(' operand ')'
+19: arith_expression ('+') ->  arith_expression '+' arith_expression
+20: arith_expression ('-') ->  arith_expression '-' arith_expression
+21: arith_expression ('*') ->  arith_expression '*' arith_expression
+22: arith_expression ('/') ->  arith_expression '/' arith_expression
+23: arith_expression ('(') ->  '(' arith_expression ')'
 24: arith_expression ->  expression_term
-25: operand ->  arith_expression
-26: expression_term ->  variable
-27: expression_term ->  constant
-28: variable (NAME) ->  NAME
-29: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
-30: constant (DOUBLE_NUMBER) ->  DOUBLE_NUMBER
-31: program_$ ->  program
+25: expression_term ->  variable
+26: expression_term ->  constant
+27: variable (NAME) ->  NAME
+28: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+29: constant (DOUBLE_NUMBER) ->  DOUBLE_NUMBER
+30: program_$ ->  program
 
 [parser.yy (info)] 
 Symbolic Terminal tokens:
@@ -49,7 +48,6 @@ Symbolic Terminal tokens:
     45: '-'
     42: '*'
     47: '/'
-   265: UMINUS
     40: '('
     41: ')'
     59: ';'
@@ -59,7 +57,7 @@ Symbolic Terminal tokens:
 [parser.yy (info)] 
 Grammar States: 
 [parser.yy (info)] State 0:
-31: program_$ ->  . program 
+30: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_list to state 2
   2:   On procedure_declaration to state 3
@@ -72,7 +70,7 @@ Grammar States:
 
 
 State 1:
-31: program_$ -> program  . 
+30: program_$ -> program  . 
 
 
 State 2:
@@ -267,209 +265,193 @@ State 32:
 
 
 State 33:
-28: variable -> NAME  . 
-  Reduce by 28: variable -> NAME  . 
+27: variable -> NAME  . 
+  Reduce by 27: variable -> NAME  . 
 
 
 State 34:
 18: assignment_statement -> variable ASSIGN  . arith_expression ';' 
   0:   On arith_expression to state 35
-  1:   On operand to state 36
-  2:   On '(' to state 37
-  3:   On expression_term to state 38
-  4:   On variable to state 39
-  5:   On constant to state 40
-  6:   On NAME to state 33
-  7:   On INTEGER_NUMBER to state 41
-  8:   On DOUBLE_NUMBER to state 42
+  1:   On '(' to state 36
+  2:   On expression_term to state 37
+  3:   On variable to state 38
+  4:   On constant to state 39
+  5:   On NAME to state 33
+  6:   On INTEGER_NUMBER to state 40
+  7:   On DOUBLE_NUMBER to state 41
 
 
 State 35:
 18: assignment_statement -> variable ASSIGN arith_expression  . ';' 
-25: operand -> arith_expression  . 
-  0:   On ';' to state 43
-  Reduce by 25: operand -> arith_expression  . 
+19: arith_expression -> arith_expression  . '+' arith_expression 
+20: arith_expression -> arith_expression  . '-' arith_expression 
+21: arith_expression -> arith_expression  . '*' arith_expression 
+22: arith_expression -> arith_expression  . '/' arith_expression 
+  0:   On ';' to state 42
+  1:   On '+' to state 43
+  2:   On '-' to state 44
+  3:   On '*' to state 45
+  4:   On '/' to state 46
 
 
 State 36:
-19: arith_expression -> operand  . '+' operand 
-20: arith_expression -> operand  . '-' operand 
-21: arith_expression -> operand  . '*' operand 
-22: arith_expression -> operand  . '/' operand 
-  0:   On '+' to state 44
-  1:   On '-' to state 45
-  2:   On '*' to state 46
-  3:   On '/' to state 47
+23: arith_expression -> '('  . arith_expression ')' 
+  0:   On arith_expression to state 47
+  1:   On '(' to state 36
+  2:   On expression_term to state 37
+  3:   On variable to state 38
+  4:   On constant to state 39
+  5:   On NAME to state 33
+  6:   On INTEGER_NUMBER to state 40
+  7:   On DOUBLE_NUMBER to state 41
 
 
 State 37:
-23: arith_expression -> '('  . operand ')' 
-  0:   On operand to state 48
-  1:   On arith_expression to state 49
-  2:   On '(' to state 37
-  3:   On expression_term to state 38
-  4:   On variable to state 39
-  5:   On constant to state 40
-  6:   On NAME to state 33
-  7:   On INTEGER_NUMBER to state 41
-  8:   On DOUBLE_NUMBER to state 42
-
-
-State 38:
 24: arith_expression -> expression_term  . 
   Reduce by 24: arith_expression -> expression_term  . 
 
 
+State 38:
+25: expression_term -> variable  . 
+  Reduce by 25: expression_term -> variable  . 
+
+
 State 39:
-26: expression_term -> variable  . 
-  Reduce by 26: expression_term -> variable  . 
+26: expression_term -> constant  . 
+  Reduce by 26: expression_term -> constant  . 
 
 
 State 40:
-27: expression_term -> constant  . 
-  Reduce by 27: expression_term -> constant  . 
+28: constant -> INTEGER_NUMBER  . 
+  Reduce by 28: constant -> INTEGER_NUMBER  . 
 
 
 State 41:
-29: constant -> INTEGER_NUMBER  . 
-  Reduce by 29: constant -> INTEGER_NUMBER  . 
+29: constant -> DOUBLE_NUMBER  . 
+  Reduce by 29: constant -> DOUBLE_NUMBER  . 
 
 
 State 42:
-30: constant -> DOUBLE_NUMBER  . 
-  Reduce by 30: constant -> DOUBLE_NUMBER  . 
-
-
-State 43:
 18: assignment_statement -> variable ASSIGN arith_expression ';'  . 
   Reduce by 18: assignment_statement -> variable ASSIGN arith_expression ';'  . 
 
 
+State 43:
+19: arith_expression -> arith_expression '+'  . arith_expression 
+  0:   On arith_expression to state 48
+  1:   On '(' to state 36
+  2:   On expression_term to state 37
+  3:   On variable to state 38
+  4:   On constant to state 39
+  5:   On NAME to state 33
+  6:   On INTEGER_NUMBER to state 40
+  7:   On DOUBLE_NUMBER to state 41
+
+
 State 44:
-19: arith_expression -> operand '+'  . operand 
-  0:   On operand to state 50
-  1:   On arith_expression to state 49
-  2:   On '(' to state 37
-  3:   On expression_term to state 38
-  4:   On variable to state 39
-  5:   On constant to state 40
-  6:   On NAME to state 33
-  7:   On INTEGER_NUMBER to state 41
-  8:   On DOUBLE_NUMBER to state 42
+20: arith_expression -> arith_expression '-'  . arith_expression 
+  0:   On arith_expression to state 49
+  1:   On '(' to state 36
+  2:   On expression_term to state 37
+  3:   On variable to state 38
+  4:   On constant to state 39
+  5:   On NAME to state 33
+  6:   On INTEGER_NUMBER to state 40
+  7:   On DOUBLE_NUMBER to state 41
 
 
 State 45:
-20: arith_expression -> operand '-'  . operand 
-  0:   On operand to state 51
-  1:   On arith_expression to state 49
-  2:   On '(' to state 37
-  3:   On expression_term to state 38
-  4:   On variable to state 39
-  5:   On constant to state 40
-  6:   On NAME to state 33
-  7:   On INTEGER_NUMBER to state 41
-  8:   On DOUBLE_NUMBER to state 42
+21: arith_expression -> arith_expression '*'  . arith_expression 
+  0:   On arith_expression to state 50
+  1:   On '(' to state 36
+  2:   On expression_term to state 37
+  3:   On variable to state 38
+  4:   On constant to state 39
+  5:   On NAME to state 33
+  6:   On INTEGER_NUMBER to state 40
+  7:   On DOUBLE_NUMBER to state 41
 
 
 State 46:
-21: arith_expression -> operand '*'  . operand 
-  0:   On operand to state 52
-  1:   On arith_expression to state 49
-  2:   On '(' to state 37
-  3:   On expression_term to state 38
-  4:   On variable to state 39
-  5:   On constant to state 40
-  6:   On NAME to state 33
-  7:   On INTEGER_NUMBER to state 41
-  8:   On DOUBLE_NUMBER to state 42
+22: arith_expression -> arith_expression '/'  . arith_expression 
+  0:   On arith_expression to state 51
+  1:   On '(' to state 36
+  2:   On expression_term to state 37
+  3:   On variable to state 38
+  4:   On constant to state 39
+  5:   On NAME to state 33
+  6:   On INTEGER_NUMBER to state 40
+  7:   On DOUBLE_NUMBER to state 41
 
 
 State 47:
-22: arith_expression -> operand '/'  . operand 
-  0:   On operand to state 53
-  1:   On arith_expression to state 49
-  2:   On '(' to state 37
-  3:   On expression_term to state 38
-  4:   On variable to state 39
-  5:   On constant to state 40
-  6:   On NAME to state 33
-  7:   On INTEGER_NUMBER to state 41
-  8:   On DOUBLE_NUMBER to state 42
+23: arith_expression -> '(' arith_expression  . ')' 
+19: arith_expression -> arith_expression  . '+' arith_expression 
+20: arith_expression -> arith_expression  . '-' arith_expression 
+21: arith_expression -> arith_expression  . '*' arith_expression 
+22: arith_expression -> arith_expression  . '/' arith_expression 
+  0:   On ')' to state 52
+  1:   On '+' to state 43
+  2:   On '-' to state 44
+  3:   On '*' to state 45
+  4:   On '/' to state 46
 
 
 State 48:
-23: arith_expression -> '(' operand  . ')' 
-19: arith_expression -> operand  . '+' operand 
-20: arith_expression -> operand  . '-' operand 
-21: arith_expression -> operand  . '*' operand 
-22: arith_expression -> operand  . '/' operand 
-  0:   On ')' to state 54
-  1:   On '+' to state 44
-  2:   On '-' to state 45
-  3:   On '*' to state 46
-  4:   On '/' to state 47
+19: arith_expression -> arith_expression '+' arith_expression  . 
+19: arith_expression -> arith_expression  . '+' arith_expression 
+20: arith_expression -> arith_expression  . '-' arith_expression 
+21: arith_expression -> arith_expression  . '*' arith_expression 
+22: arith_expression -> arith_expression  . '/' arith_expression 
+  0 (removed by precedence):   On '+' to state 43
+  1 (removed by precedence):   On '-' to state 44
+  2:   On '*' to state 45
+  3:   On '/' to state 46
+  Reduce by 19: arith_expression -> arith_expression '+' arith_expression  . 
 
 
 State 49:
-25: operand -> arith_expression  . 
-  Reduce by 25: operand -> arith_expression  . 
+20: arith_expression -> arith_expression '-' arith_expression  . 
+19: arith_expression -> arith_expression  . '+' arith_expression 
+20: arith_expression -> arith_expression  . '-' arith_expression 
+21: arith_expression -> arith_expression  . '*' arith_expression 
+22: arith_expression -> arith_expression  . '/' arith_expression 
+  0 (removed by precedence):   On '+' to state 43
+  1 (removed by precedence):   On '-' to state 44
+  2:   On '*' to state 45
+  3:   On '/' to state 46
+  Reduce by 20: arith_expression -> arith_expression '-' arith_expression  . 
 
 
 State 50:
-19: arith_expression -> operand '+' operand  . 
-19: arith_expression -> operand  . '+' operand 
-20: arith_expression -> operand  . '-' operand 
-21: arith_expression -> operand  . '*' operand 
-22: arith_expression -> operand  . '/' operand 
-  0 (removed by precedence):   On '+' to state 44
-  1 (removed by precedence):   On '-' to state 45
-  2:   On '*' to state 46
-  3:   On '/' to state 47
-  Reduce by 19: arith_expression -> operand '+' operand  . 
+21: arith_expression -> arith_expression '*' arith_expression  . 
+19: arith_expression -> arith_expression  . '+' arith_expression 
+20: arith_expression -> arith_expression  . '-' arith_expression 
+21: arith_expression -> arith_expression  . '*' arith_expression 
+22: arith_expression -> arith_expression  . '/' arith_expression 
+  0 (removed by precedence):   On '+' to state 43
+  1 (removed by precedence):   On '-' to state 44
+  2 (removed by precedence):   On '*' to state 45
+  3 (removed by precedence):   On '/' to state 46
+  Reduce by 21: arith_expression -> arith_expression '*' arith_expression  . 
 
 
 State 51:
-20: arith_expression -> operand '-' operand  . 
-19: arith_expression -> operand  . '+' operand 
-20: arith_expression -> operand  . '-' operand 
-21: arith_expression -> operand  . '*' operand 
-22: arith_expression -> operand  . '/' operand 
-  0 (removed by precedence):   On '+' to state 44
-  1 (removed by precedence):   On '-' to state 45
-  2:   On '*' to state 46
-  3:   On '/' to state 47
-  Reduce by 20: arith_expression -> operand '-' operand  . 
+22: arith_expression -> arith_expression '/' arith_expression  . 
+19: arith_expression -> arith_expression  . '+' arith_expression 
+20: arith_expression -> arith_expression  . '-' arith_expression 
+21: arith_expression -> arith_expression  . '*' arith_expression 
+22: arith_expression -> arith_expression  . '/' arith_expression 
+  0 (removed by precedence):   On '+' to state 43
+  1 (removed by precedence):   On '-' to state 44
+  2 (removed by precedence):   On '*' to state 45
+  3 (removed by precedence):   On '/' to state 46
+  Reduce by 22: arith_expression -> arith_expression '/' arith_expression  . 
 
 
 State 52:
-21: arith_expression -> operand '*' operand  . 
-19: arith_expression -> operand  . '+' operand 
-20: arith_expression -> operand  . '-' operand 
-21: arith_expression -> operand  . '*' operand 
-22: arith_expression -> operand  . '/' operand 
-  0 (removed by precedence):   On '+' to state 44
-  1 (removed by precedence):   On '-' to state 45
-  2 (removed by precedence):   On '*' to state 46
-  3 (removed by precedence):   On '/' to state 47
-  Reduce by 21: arith_expression -> operand '*' operand  . 
-
-
-State 53:
-22: arith_expression -> operand '/' operand  . 
-19: arith_expression -> operand  . '+' operand 
-20: arith_expression -> operand  . '-' operand 
-21: arith_expression -> operand  . '*' operand 
-22: arith_expression -> operand  . '/' operand 
-  0 (removed by precedence):   On '+' to state 44
-  1 (removed by precedence):   On '-' to state 45
-  2 (removed by precedence):   On '*' to state 46
-  3 (removed by precedence):   On '/' to state 47
-  Reduce by 22: arith_expression -> operand '/' operand  . 
-
-
-State 54:
-23: arith_expression -> '(' operand ')'  . 
-  Reduce by 23: arith_expression -> '(' operand ')'  . 
+23: arith_expression -> '(' arith_expression ')'  . 
+  Reduce by 23: arith_expression -> '(' arith_expression ')'  . 
 
 
 
