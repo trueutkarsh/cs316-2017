@@ -10,7 +10,6 @@ using namespace std;
 #include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
-#include"sequence-ast.hh"
 #include"procedure.hh"
 #include"program.hh"
 
@@ -57,21 +56,48 @@ void Ast::set_data_type(Data_Type dt)
 
 ////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////
+Sequence_Ast::Sequence_Ast(int line)
+{
+	lineno = line;
+}
+
+Sequence_Ast::~Sequence_Ast()
+{
+
+}
+
+void Sequence_Ast:: ast_push_back(Ast * ast)
+{
+	statement_list.push_back(ast);
+}
+
+void Sequence_Ast:: print (ostream & file_buffer)
+{
+	
+}
+
+
+////////////////////////////////////////////////////////////////
+
 Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line)
 {
 	//ADD CODE HERE
 	lhs = temp_lhs;
 	rhs = temp_rhs;
 	lineno = line;
+	ast_num_child = binary_arity;
+	node_data_type = lhs->get_data_type();
 
 }
 
-// Assignment_Ast::~Assignment_Ast()
-// {
-// 	//ADD CODE HERE
-	
+Assignment_Ast::~Assignment_Ast()
+{
+	//ADD CODE HERE
+	delete lhs;
+	delete rhs;
 
-// }
+}
 
 bool Assignment_Ast::check_ast()
 {
@@ -80,15 +106,28 @@ bool Assignment_Ast::check_ast()
 
 	// use typeid(), get_data_type()
 	//ADD CODE HERE
+	// CHECK_INVARIANT((lhs->get_data_type() == rhs->get_data_type()), "Lhs of Assignment_Ast cannot be null");
 
-	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, 
-		"Assignment statement data type not compatible", lineno);
+
+	bool result;
+
+	result = lhs->get_data_type() == rhs->get_data_type();
+
+	if(!result){
+		CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible", lineno);
+	}
+
+	return result;
 }
 
 void Assignment_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-	return;
+	file_buffer<<"\n Asgn: \n";
+	lhs->print(file_buffer);
+	file_buffer<<" = ";
+	rhs->print(file_buffer);
+	file_buffer<<"\n";
 }
 
 /////////////////////////////////////////////////////////////////
@@ -96,10 +135,13 @@ void Assignment_Ast::print(ostream & file_buffer)
 Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line)
 {
 
+	variable_symbol_entry = &var_entry;
 	CHECK_INVARIANT((variable_symbol_entry->get_variable_name() == name),
 		"Variable's symbol entry is not matching its name");
 	//ADD CODE HERE
-	variable_symbol_entry = &var_entry;
+	lineno = line;
+	ast_num_child = zero_arity;
+	node_data_type = variable_symbol_entry->get_data_type();
 }
 
 Name_Ast::~Name_Ast()
@@ -109,7 +151,7 @@ Data_Type Name_Ast::get_data_type()
 {
 	// refer to functions for Symbol_Table_Entry 
 
-	variable_symbol_entry->get_data_type();
+	return variable_symbol_entry->get_data_type();
 	//ADD CODE HERE
 }
 
@@ -117,7 +159,7 @@ Symbol_Table_Entry & Name_Ast::get_symbol_entry()
 {
 	//ADD CODE HERE
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "Vairable_Symbol_Table_Entry cannot be null");
-	*variable_symbol_entry;
+	return *variable_symbol_entry;
 }
 
 void Name_Ast::set_data_type(Data_Type dt)
@@ -125,12 +167,15 @@ void Name_Ast::set_data_type(Data_Type dt)
 	//ADD CODE HERE
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "Vairable_Symbol_Table_Entry cannot be null");
 	variable_symbol_entry->set_data_type(dt);
+	node_data_type = dt;
 }
 
 void Name_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-
+	file_buffer<<" ";
+	file_buffer<<variable_symbol_entry->get_variable_name();
+	file_buffer<<" ";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -143,6 +188,7 @@ Number_Ast<DATA_TYPE>::Number_Ast(DATA_TYPE number, Data_Type constant_data_type
 	constant = number;
 	node_data_type = constant_data_type;
 	lineno = line;
+	ast_num_child = zero_arity;
 	
 }
 
@@ -168,14 +214,24 @@ template <class DATA_TYPE>
 bool Number_Ast<DATA_TYPE>::is_value_zero()
 {
 	//ADD CODE HERE
-	if (constant == 0){
+	// if (constant == 0){
 
-		return true;
-	}
-	else{
+	// 	return true;
+	// }
+	// else{
 
-		return false;
+	// 	return false;
+	// }
+	bool result;
+	if (node_data_type == int_data_type){
+		result = constant == 0;
 	}
+	else if (node_data_type == double_data_type){
+		result = constant == 0.0;
+	}
+
+	return result;
+
 }
 
 template <class DATA_TYPE>
@@ -183,6 +239,8 @@ void Number_Ast<DATA_TYPE>::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
 	file_buffer<<constant;
+	file_buffer<<" ";
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -197,14 +255,35 @@ void Arithmetic_Expr_Ast::set_data_type(Data_Type dt)
 {
 	//ADD CODE HERE
 	node_data_type = dt;
+
 }
 
 bool Arithmetic_Expr_Ast::check_ast()
 {
 	// use get_data_type(), typeid()
 	//ADD CODE HERE
+	// CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible", lineno);
+	// CHECK_INVARIANT((rhs != NULL), "Rhs of Assignment_Ast cannot be null");
 
-	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible", lineno);
+	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
+
+
+	bool result ;
+	if (ast_num_child == binary_arity){
+
+		result = lhs->get_data_type() == rhs->get_data_type();
+	}
+	else{
+
+		result = true; 
+	}
+
+	if(!result){
+		CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible", lineno);
+	}
+
+	return result;
+
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -216,16 +295,18 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 	lhs = l;
 	rhs = r;
 	lineno = line;
-
+	ast_num_child = binary_arity;
+	node_data_type = lhs->get_data_type();
 }
 
 void Plus_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
+	file_buffer<<"\n Plus \n LHS: \n";
 	lhs->print(file_buffer);
-	file_buffer<<" + ";
+	file_buffer<<" \n RHS: \n";
 	rhs->print(file_buffer);
-
+	file_buffer<<"\n";
 }
 
 /////////////////////////////////////////////////////////////////
@@ -236,15 +317,19 @@ Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 	lhs = l;
 	rhs = r;
 	lineno = line;
+	ast_num_child = binary_arity;
+	node_data_type = lhs->get_data_type();
+
 }
 
 void Minus_Ast::print(ostream & file_buffer)
 {
-	//ADD CODE HERE
+	//ADD CODE HERE	
+	file_buffer<<"\n Minus  LHS: ";
 	lhs->print(file_buffer);
-	file_buffer<<" - ";
+	file_buffer<<" - \n RHS: \n";
 	rhs->print(file_buffer);
-
+	file_buffer<<"\n";
 }
 
 //////////////////////////////////////////////////////////////////
@@ -255,15 +340,18 @@ Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 	lhs = l;
 	rhs = r;
 	lineno = line;
+	ast_num_child = binary_arity;
+	node_data_type = lhs->get_data_type();
 }
 
 void Mult_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
+	file_buffer<<"\n Mult :LHS: ";
 	lhs->print(file_buffer);
-	file_buffer<<" * ";
+	file_buffer<<" * \n RHS: \n";
 	rhs->print(file_buffer);
-
+	file_buffer<<"\n";
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -274,15 +362,19 @@ Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 	lhs = l;
 	rhs = r;
 	lineno = line;
+	ast_num_child = binary_arity;
+	node_data_type = lhs->get_data_type();
 }
 
 void Divide_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-	lhs->print(file_buffer);
-	file_buffer<<" / ";
-	rhs->print(file_buffer);
 
+	file_buffer<<"\n Divide :LHS: ";
+	lhs->print(file_buffer);
+	file_buffer<<" / \n RHS: \n";
+	rhs->print(file_buffer);
+	file_buffer<<"\n";
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -290,13 +382,27 @@ void Divide_Ast::print(ostream & file_buffer)
 UMinus_Ast::UMinus_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
+	lhs = l;
+	rhs = r;
+	lineno = line;
+	ast_num_child = unary_arity;
+	node_data_type = lhs->get_data_type();
 }
 
 void UMinus_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
+	file_buffer<<"\n Uminus :LHS: ";
+	lhs->print(file_buffer);
+	file_buffer<<"\n";
 }
 
 
 template class Number_Ast<double>;
 template class Number_Ast<int>;
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+///////////////////////////LAB 3 CODE FROM HERE///////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
