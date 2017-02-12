@@ -1,0 +1,4 @@
+1. decide the grammar first
+2. write scanner completely
+3  write the parser
+4. fill in the ast.cc
