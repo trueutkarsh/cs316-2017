@@ -5,6 +5,10 @@
 
 %union 
 {
+	// pair<Data_Type, string> * decl;
+	// Symbol_Table * symbol_table;
+	// Symbol_Table_Entry * symbol_entry;
+	// Procedure * procedure;
 	//ADD CODE HERE
 	int integer_value;
 	double double_value;
@@ -17,6 +21,7 @@
 	Symbol_Table * symbol_table;
 	Symbol_Table_Entry * symbol_entry;
 	Procedure * procedure;
+
 };
 
 //ADD TOKENS HERE
@@ -26,14 +31,10 @@
 %token RETURN INTEGER FLOAT
 %token ASSIGN VOID
 
-
 %left '+' '-'
 %left '*' '/'
-//%right UMINUS
+// %right UMINUS
 %nonassoc '('
-%nonassoc ')'
-
-
 
 %type <symbol_table> optional_variable_declaration_list
 %type <symbol_table> variable_declaration_list
@@ -46,6 +47,7 @@
 %type <ast> constant
 %type <arthm_ast> arith_expression
 %type <ast> expression_term
+
 
 %start program
 
@@ -260,6 +262,7 @@ declaration:
 	{
 	if (NOT_ONLY_PARSE)
 	{
+
 		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
 
 		string name = *$2;
@@ -267,8 +270,7 @@ declaration:
 
 		pair<Data_Type, string> * declar = new pair<Data_Type, string>(type, name);
 
-		$$ = declar;
-	}
+		$$ = declar;	}
 	}
 |
 	FLOAT NAME
@@ -282,8 +284,7 @@ declaration:
 
 		pair<Data_Type, string> * declar = new pair<Data_Type, string>(type, name);
 
-		$$ = declar;	
-	}
+		$$ = declar;	}
 	}
 ;
 
@@ -293,7 +294,7 @@ statement_list:
 	if (NOT_ONLY_PARSE)
 	{
 		//ADD CODE HERE
-		$$ = NULL;
+		$$ = NULL;		
 	}
 	}
 |
@@ -302,6 +303,7 @@ statement_list:
 	if (NOT_ONLY_PARSE)
 	{
 
+		//ADD CODE HERE
 		Sequence_Ast * stmt_list = $1;
 		Ast * stmt = $2;
 		// check if  both are not null
@@ -312,14 +314,14 @@ statement_list:
 
 		// add statement to statement_list
 		stmt_list->ast_push_back(stmt);
-		$$ = stmt_list;
-
+		$$ = stmt_list;		
 	}
 	}
 ;
 // Make sure to call check_ast in assignment_statement and arith_expression
 // Refer to error_display.hh for displaying semantic errors if any
 assignment_statement:
+
 	variable ASSIGN arith_expression ';'
 	{
 	if (NOT_ONLY_PARSE)
@@ -332,8 +334,10 @@ assignment_statement:
 		
 		Assignment_Ast * assgn_stmt = new Assignment_Ast(left, right, get_line_number());
 		// make a joint ast
+		
+		// Make sure to call check_ast in assignment_statement and arith_expression
 
-		$$ = assgn_stmt;
+		$$ = assgn_stmt;		
 	}
 	}
 ;
@@ -345,97 +349,99 @@ arith_expression:
                 // Connect the rules with the remaining rules given below
 	arith_expression '+' arith_expression
 	{
-	if (NOT_ONLY_PARSE)
-	{
-		// add code for add here
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-		Ast * left = $1;
-		Ast * right = $3;
+		if (NOT_ONLY_PARSE)
+		{
+			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+			Ast * left = $1;
+			Ast * right = $3;
 
-		Arithmetic_Expr_Ast * plus_stmt = new Plus_Ast(left, right, get_line_number());
+			Arithmetic_Expr_Ast * plus_stmt = new Plus_Ast(left, right, get_line_number());
 
-		$$ = plus_stmt;
-	}
-
+			$$ = plus_stmt;
+		}
 	}
 |
 	arith_expression '-' arith_expression
 	{
-	if (NOT_ONLY_PARSE)
-	{
-			// add code for add here
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-		Ast * left = $1;
-		Ast * right = $3;
+		if (NOT_ONLY_PARSE)
+		{
+			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+			Ast * left = $1;
+			Ast * right = $3;
 
-		Arithmetic_Expr_Ast * minus_stmt = new Minus_Ast(left, right, get_line_number());
+			Arithmetic_Expr_Ast * minus_stmt = new Minus_Ast(left, right, get_line_number());
 
-		$$ = minus_stmt;	
-	}
-
+			$$ = minus_stmt;
+		}
 	}
 |
 	arith_expression '*' arith_expression
 	{
-	if (NOT_ONLY_PARSE)
-	{
-				// add code for add here
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-		Ast * left = $1;
-		Ast * right = $3;
+		if (NOT_ONLY_PARSE)
+		{
+			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+			Ast * left = $1;
+			Ast * right = $3;
 
-		Arithmetic_Expr_Ast * mult_stmt = new Mult_Ast(left, right, get_line_number());
+			Arithmetic_Expr_Ast * mult_stmt = new Mult_Ast(left, right, get_line_number());
 
-		$$ = mult_stmt;
-	}
-
+			$$ = mult_stmt;
+		}
 	}
 |
 	arith_expression '/' arith_expression
 	{
-	if (NOT_ONLY_PARSE)
-	{
-				// add code for add here
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-		Ast * left = $1;
-		Ast * right = $3;
+		if (NOT_ONLY_PARSE)
+		{
+			CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+			Ast * left = $1;
+			Ast * right = $3;
 
-		Arithmetic_Expr_Ast * divide_stmt = new Divide_Ast(left, right, get_line_number());
+			Arithmetic_Expr_Ast * divide_stmt = new Divide_Ast(left, right, get_line_number());
 
-		$$ = divide_stmt;
+			$$ = divide_stmt;
+		}
 	}
+// |
+// 	'-' operand %prec UMINUS
+// 	{
+// 		if (NOT_ONLY_PARSE)
+// 		{
 
-	}
+// 		}
+// 	}
+// |
 |
 	'(' arith_expression ')'
 	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = (Arithmetic_Expr_Ast *) $2;
-	}
-
+		if (NOT_ONLY_PARSE)
+		{
+			$$ = (Arithmetic_Expr_Ast *) $2;
+		}
 	}
 |
-// 	'-' arith_expression %prec UMINUS
+	expression_term
+	{
+		if (NOT_ONLY_PARSE)
+		{
+
+			$$ = (Arithmetic_Expr_Ast *) $1;
+
+		}
+	}
+;				
+		
+
+// operand:
+// 	arith_expression
 // 	{
 // 	if (NOT_ONLY_PARSE)
 // 	{
-// 		$$ = (Arithmetic_Expr_Ast *) $2;
+// 		//ADD CODE HERE
+// 		$$ = $1;
 // 	}
-
 // 	}
-// |
-	expression_term
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = (Arithmetic_Expr_Ast *) $1;
-	}
-
-	}
-
-;
-
+// ;
 
 expression_term:
 	variable
@@ -501,7 +507,6 @@ constant:
 		//ADD CODE HERE
 		Ast * num_ast = new Number_Ast<double>($1, double_data_type, get_line_number());
 
-		$$ = num_ast;
-	}
+		$$ = num_ast;	}
 	}
 ;
