@@ -36,18 +36,23 @@ variable_declaration:
 ;
 
 declaration:
-	INTEGER NAME
+	INTEGER var_list
 |
-	FLOAT NAME
+	FLOAT var_list
 
 ;
 
+var_list:
+	NAME
+	|
+	var_list ',' NAME
 
 statement_list:
 |
 	statement_list statement
 ;
 
+// include '{' statement_list '}'  in statement
 
 statement:
 	
@@ -55,41 +60,35 @@ statement:
 
 	|
 
-	WHILE '(' condn_expr ')' '{' statement_list '}'
+	'{' statement_list '}'
 
 	|
 
-	IF '(' condn_expr ')' statement
+
+	WHILE '(' boolean_expr ')' statement
 
 	|
 
-	IF '(' condn_expr ')' '{' statement_list '}' ELSE '{' statement_list '}'
+	IF '(' boolean_expr ')' THEN statement
 
 	|
 
-	DO '{' statement_list '}' WHILE '(' condn_expr ')'
+	IF '(' boolean_expr ')' THEN statement ELSE statement
 
 	|
 
-	variable ASSIGN boolean_expr '?' expression ':'
- expression ';'  
+	DO statement WHILE '(' boolean_expr ')'
 	;
 
 
 assignment_statement:
 
-	variable ASSIGN expression ';'
+	variable ASSIGN arith_expression ';'
+  
+
 
 ;
 
-
-expression :
-
-	arith_expression 
-	
-	|
-
-	boolean_expr ;
 
 
 
@@ -125,27 +124,27 @@ boolean_expr:
 
 relational_expr:
 
-	expr '<' expr 
+	arith_expression '<' arith_expression 
 
 	|
 
-	expr '>' expr 
+	arith_expression '>' arith_expression 
 
 	|
 
-	expr '<=' expr 
+	arith_expression '<=' arith_expression 
 
 	|
 
-	expr '>=' expr 
+	arith_expression '>=' arith_expression 
 
 	|
 
-	expr '==' expr 
+	arith_expression '==' arith_expression 
 
 	|
 
-	expr '!=' expr 
+	arith_expression '!=' arith_expression 
 
 
 ;

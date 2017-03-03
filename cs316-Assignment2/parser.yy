@@ -33,7 +33,7 @@
 
 %left '+' '-'
 %left '*' '/'
-// %right UMINUS
+%right UMINUS
 %nonassoc '('
 
 %type <symbol_table> optional_variable_declaration_list
@@ -329,6 +329,7 @@ assignment_statement:
 		//ADD CODE HERE
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 
+		
 		Ast * left = $1;
 		Ast * right = $3;
 		
@@ -336,6 +337,9 @@ assignment_statement:
 		// make a joint ast
 		
 		// Make sure to call check_ast in assignment_statement and arith_expression
+
+		// CHECK_INVARIANT(($3)->check_ast(), "Invalid arithmetic expr");
+		// CHECK_INVARIANT(assgn_stmt->check_ast(), "invalid assignment expr");
 
 		$$ = assgn_stmt;		
 	}
@@ -402,15 +406,19 @@ arith_expression:
 			$$ = divide_stmt;
 		}
 	}
-// |
-// 	'-' operand %prec UMINUS
-// 	{
-// 		if (NOT_ONLY_PARSE)
-// 		{
+|
 
-// 		}
-// 	}
-// |
+	'-' arith_expression %prec UMINUS
+	{
+		if (NOT_ONLY_PARSE)
+		{
+			CHECK_INVARIANT(($2 != NULL), "lhs/rhs cannot be null");
+			UMinus_Ast * uminus_stmt = new UMinus_Ast($2, NULL, get_line_number());
+
+			$$ = uminus_stmt;
+		}
+	}
+
 |
 	'(' arith_expression ')'
 	{

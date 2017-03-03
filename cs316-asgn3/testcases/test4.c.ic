@@ -1,0 +1,32 @@
+  Procedure: main
+  Intermediate Code Statements
+	iLoad.d:    	f2 <- 3.00
+	store.d:    	x <- f2
+	iLoad.d:    	f2 <- 9.90
+	store.d:    	y <- f2
+	load.d:    	f2 <- x
+	load.d:    	f4 <- y
+	mul.d:    	f6 <- f2 , f4
+	store.d:    	area <- f6
+	iLoad.d:    	f2 <- 2.00
+	load.d:    	f4 <- x
+	load.d:    	f6 <- y
+	add.d:    	f8 <- f4 , f6
+	mul.d:    	f4 <- f2 , f8
+	store.d:    	perimeter <- f4
+	iLoad.d:    	f2 <- 22.00
+	load.d:    	f4 <- x
+	mul.d:    	f6 <- f2 , f4
+	load.d:    	f2 <- x
+	mul.d:    	f4 <- f6 , f2
+	iLoad.d:    	f2 <- 7.00
+	div.d:    	f6 <- f4 , f2
+	store.d:    	area <- f6
+	iLoad.d:    	f2 <- 2.00
+	iLoad.d:    	f4 <- 22.00
+	mul.d:    	f6 <- f2 , f4
+	load.d:    	f2 <- x
+	mul.d:    	f4 <- f6 , f2
+	iLoad.d:    	f2 <- 7.00
+	div.d:    	f6 <- f4 , f2
+	store.d:    	perimeter <- f6

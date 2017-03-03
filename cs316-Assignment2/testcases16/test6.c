@@ -1,8 +1,8 @@
 void main(); main()
 {
-	int a;
+	float a;
 	int b;
-
-    a = 4;
-    b = (a / 2) * (a + 2) ;
+    // b = 10;
+    a = 4.0 + -5.0;
+    //b = (a / 2) * (a + 2) ;
 }

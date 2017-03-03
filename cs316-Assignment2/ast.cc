@@ -68,11 +68,10 @@ Assignment_Ast::Assignment_Ast(Ast *temp_lhs, Ast *temp_rhs, int line)
     ast_num_child = binary_arity;
 }
 
-// Assignment_Ast::~Assignment_Ast()
-// {
-// 	//ADD CODE HERE
-
-// }
+Assignment_Ast::~Assignment_Ast()
+{
+    //ADD CODE HERE
+}
 
 bool Assignment_Ast::check_ast()
 {
