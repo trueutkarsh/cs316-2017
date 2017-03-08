@@ -127,7 +127,7 @@ public:
 class Ics_Opd
 {	
 	/* 
-		Abstract base class for ic operands. Fr	om this class we 
+		Abstract base class for ic operands. From this class we 
 		derive classes for three kinds of operands: memory addresses, 
 		constants, and registers 
 	*/
@@ -221,7 +221,7 @@ class Move_IC_Stmt: public Icode_Stmt
 	Ics_Opd * result; 
 
 public:
-	Move_IC_Stmt(Tgt_Op op, Ics_Opd * o1, Ics_Opd * res); 
+	Move_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * result); 
 	~Move_IC_Stmt() {} 
 	Move_IC_Stmt & operator=(const Move_IC_Stmt & rhs);
 

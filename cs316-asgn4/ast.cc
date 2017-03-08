@@ -14,7 +14,7 @@ using namespace std;
 #include "program.hh"
 
 // declare the static variable here
-int Ast::labelCounter;
+int Ast::labelCounter = 0;
 
 Ast::Ast()
 {
